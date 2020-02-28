@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+    <table>
+        <thead>
+          <tr>
+              <th>Name</th>
+              <th>Code</th>
+              <th>Scheduled_arrival</th>
+              <th>Scheduled_departure</th>
+              <th>Distance</th>
+              <th>Day</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        {% for st in stations %}
+          <tr>
+            <td>{{ st.0 }}</td>
+            <td>{{ st.1 }}</td>
+            <td>{{ st.2 }}</td>
+            <td>{{ st.3 }}</td>
+            <td>{{ st.4 }}</td>
+            <td>{{ st.5 }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+
+{% endblock %}
