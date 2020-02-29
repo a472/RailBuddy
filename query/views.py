@@ -1,19 +1,47 @@
 from django.shortcuts import render
 import requests
-api_key = 'fp3427nh33'
-# api_key = 'fj4ma5chvh'
+
+api_key = '3v49bc4x7p'
+
+
 # Create your views here.
 
 def home(request):
 	return render(request, 'base.html')
 
+
+def liveTrainStatus(request):
+	return render(request, 'query/liveTrainStatus.html')
+
+
+def fare_enquiry(request):
+	if request.method=='POST':
+		train_number = request.POST.get('train_number')
+		source_stn_code = request.POST.get('source_stn_code')
+		dest_stn_code = request.POST.get('dest_stn_code')
+		age = request.POST.get('age')
+		prefs = request.POST.get('class_code')
+		quota = request.POST.get('quota_code')
+		dated = str(request.POST.get('date'))
+		print(dated)
+		dd = str(dated[8:])
+		mm = str(dated[5:7])
+		yyyy = str(dated[:4])
+		date = dd + '-' + mm + '-' + yyyy
+
+		final_url = 'https://api.railwayapi.com/v2/fare/train/{}/source/{}/dest/{}/age/{}/pref/{}/quota/{}/date/{}/apikey/{}/'.format(
+			train_number, source_stn_code, dest_stn_code, age, prefs, quota, date, api_key)
+		print(final_url)
+		response = requests.get(final_url, params=request.POST)
+		data = response.json()
+		fare = data['fare']
+		return render(request, 'query/fare_enquiry.html', {'fare': fare})
+	return render(request, 'query/fare_enquiry.html')
+
+
 def train_route(request):
 	train_number = request.POST.get('train-number')
-
-
-
 	final_url = 'https://api.railwayapi.com/v2/route/train/{}/apikey/{}/'.format(train_number, api_key)
-
 	response = requests.get(final_url, params=request.POST)
 	data = response.json()
 
@@ -28,46 +56,7 @@ def train_route(request):
 		day = route['day']
 
 		stations.append([name, code, scharr, schdep, distance, day])
-	context={
-		'stations':stations,
+	context = {
+		'stations': stations,
 	}
-
-
 	return render(request, 'query/train_route.html', context)
-
-
-def trainBetweenStation(request):
-	if request.method=='POST':
-
-		from_st = request.POST.get('from_station')
-		dest_st = request.POST.get('to_station')
-		date = request.POST.get('date')
-		final_url = 'https://api.railwayapi.com/v2/between/source/{}/dest/{}/date/{}/apikey/{}/'.format(from_st, dest_st, date, api_key)
-		print(final_url)
-		response = requests.get(final_url, params=request.POST)
-		data = response.json()
-
-		trains = []
-		fields = data['trains']
-
-		for field in fields:
-			train = field['number'] + ' - ' + field['name']
-			from_st_code = field['from_station']['code']
-			src_dep_time = field['src_departure_time']
-			to_st_code = field['to_station']['code']
-			dest_arr_time = field['dest_arrival_time']
-
-			travel_time = field['travel_time']
-
-			runs_day =[[x['code'],x['runs']] for x in field['days']]  # [[mon,Y],[tue,N].......
-
-			trains.append([train, from_st_code, src_dep_time, to_st_code, dest_arr_time, travel_time, runs_day])
-
-		context = {
-			'trains':trains,
-			'source':fields[0]['from_station']['name'],
-			'dest':fields[0]['to_station']['name'],
-		}
-		print(final_url)
-		return render(request, 'query/trainBetweenStation.html', context)
-	return render(request, 'query/trainBetweenStation.html')
