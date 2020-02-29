@@ -1,0 +1,26 @@
+{% load static %}
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Live Train Status</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+<nav>
+    <div class="container nav-wrapper">
+        <a href="/" class="brand-logo">RailBuddy</a>
+        <ul id="nav-mobile" class="right">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'train_route' %}">train-route</a></li>
+            <li><a href="{% url 'liveTrainStatus' %}"> Live Status </a> </li>
+            <li><a href="{% url 'fare_enquiry' %}" > Fare Enquiry</a> </li>
+
+        </ul>
+    </div>
+</nav>
